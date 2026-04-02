@@ -11,6 +11,7 @@ import type {
   INodeType,
   INodeTypeDescription,
 } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
 
 import * as member from './actions/member';
 import * as collection from './actions/collection';
@@ -1451,7 +1452,7 @@ export class Bitwarden implements INodeType {
         }
 
         returnData.push(...result);
-      } catch (error) {
+      } catch (error: any) {
         if (this.continueOnFail()) {
           returnData.push({
             json: {
