@@ -1,6 +1,6 @@
 # n8n-nodes-bitwarden
 
-> [Velocity BPA Licensing Notice]
+> **[Velocity BPA Licensing Notice]**
 >
 > This n8n node is licensed under the Business Source License 1.1 (BSL 1.1).
 >
@@ -8,376 +8,202 @@
 >
 > For licensing information, visit https://velobpa.com/licensing or contact licensing@velobpa.com.
 
-A comprehensive n8n community node for Bitwarden, the open-source password manager and secrets management platform. This node enables workflow automation for organization management, member provisioning, collection administration, SSO configuration, directory sync, and Secrets Manager integration through Bitwarden's Public API.
+An n8n community node for integrating with Bitwarden password management and secrets platform. This node provides 7 resources with comprehensive operations for managing organizations, members, groups, collections, events, secrets, and projects through Bitwarden's API.
 
-![n8n](https://img.shields.io/badge/n8n-community--node-orange)
-![Bitwarden](https://img.shields.io/badge/Bitwarden-API-175DDC)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
+![n8n Community Node](https://img.shields.io/badge/n8n-Community%20Node-blue)
 ![License](https://img.shields.io/badge/license-BSL--1.1-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)
+![Bitwarden](https://img.shields.io/badge/Bitwarden-API-175DDC)
+![Security](https://img.shields.io/badge/Security-Password%20Manager-green)
+![Enterprise](https://img.shields.io/badge/Enterprise-Ready-orange)
 
 ## Features
 
-- **Member Management**: Invite, confirm, update, revoke, and restore organization members with collection and group access control
-- **Collection Administration**: Create, update, delete collections with granular member and group access permissions
-- **Group Management**: Organize members into groups with bulk operations and collection access configuration
-- **Policy Configuration**: Configure organization security policies including 2FA, master password requirements, SSO, and vault timeout
-- **Event Monitoring**: Query and filter organization audit events by date range, member, or event type
-- **Organization Settings**: Manage organization details, billing, subscription, and API keys
-- **SSO Configuration**: Configure OpenID Connect and SAML 2.0 single sign-on with Key Connector support
-- **Directory Sync**: Configure and trigger directory synchronization with Azure AD, Okta, OneLogin, GSuite, and more
-- **Secrets Manager**: Manage secrets, projects, and service accounts for DevOps credential management
-- **Import/Export**: Bulk import and export organization vault data and member lists
-- **Multi-Environment Support**: Works with Bitwarden Cloud (US/EU) and self-hosted instances
-- **Trigger Node**: Poll for organization events with configurable event type filtering
+- **Organization Management** - Create, update, and manage Bitwarden organizations with full administrative control
+- **Member Administration** - Add, remove, and manage organization members with role-based access control
+- **Group Operations** - Create and manage groups for organized access control and permission management
+- **Collection Management** - Organize vault items into collections with granular sharing permissions
+- **Event Monitoring** - Access comprehensive audit logs and event tracking for compliance and security
+- **Secrets Management** - Securely store and retrieve secrets for applications and infrastructure
+- **Project Organization** - Create and manage projects to organize secrets and access controls
+- **Enterprise Integration** - Full API coverage for enterprise Bitwarden deployments
 
 ## Installation
 
 ### Community Nodes (Recommended)
 
 1. Open n8n
-2. Go to **Settings** > **Community Nodes**
-3. Select **Install**
-4. Enter `n8n-nodes-bitwarden` in the input field
+2. Go to **Settings** → **Community Nodes**
+3. Click **Install a community node**
+4. Enter `n8n-nodes-bitwarden`
 5. Click **Install**
 
 ### Manual Installation
 
 ```bash
-# Navigate to your n8n installation directory
 cd ~/.n8n
-
-# Install the package
 npm install n8n-nodes-bitwarden
 ```
 
 ### Development Installation
 
 ```bash
-# Clone the repository
 git clone https://github.com/Velocity-BPA/n8n-nodes-bitwarden.git
 cd n8n-nodes-bitwarden
-
-# Install dependencies
 npm install
-
-# Build the project
 npm run build
-
-# Create symlink to n8n custom nodes directory
 mkdir -p ~/.n8n/custom
 ln -s $(pwd) ~/.n8n/custom/n8n-nodes-bitwarden
-
-# Restart n8n
+n8n start
 ```
 
 ## Credentials Setup
 
-### Bitwarden API Credentials
-
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| Client ID | String | Yes | Organization API Client ID from Admin Console |
-| Client Secret | String | Yes | Organization API Client Secret |
-| Environment | Options | Yes | Cloud US, Cloud EU, or Self-hosted |
-| Self-Hosted URL | String | Conditional | Required if using Self-hosted environment |
-
-### Obtaining API Credentials
-
-1. Log into the Bitwarden Web Vault as an organization owner
-2. Navigate to **Admin Console** > **Settings** > **Organization info**
-3. Scroll to the **API Key** section
-4. Click **View API Key** or **Rotate API Key**
-5. Copy the `client_id` and `client_secret` values
-
-**Note**: The client_id format is `organization.{uuid}`
+| Field | Description | Required |
+|-------|-------------|----------|
+| API Key | Your Bitwarden organization API key | Yes |
+| Organization ID | The ID of your Bitwarden organization | Yes |
+| Base URL | Custom Bitwarden server URL (leave empty for bitwarden.com) | No |
 
 ## Resources & Operations
 
-### Members
+### 1. Organization
 
 | Operation | Description |
 |-----------|-------------|
-| Get All | List all organization members |
-| Get | Get member by ID |
-| Create | Invite new member to organization |
-| Update | Update member details and permissions |
-| Delete | Remove member from organization |
-| Reinvite | Resend invitation to pending member |
-| Confirm | Confirm an accepted member |
-| Update Groups | Update member group assignments |
-| Update Collections | Update member collection access |
-| Revoke | Revoke member access |
-| Restore | Restore a revoked member |
+| Get | Retrieve organization details and settings |
+| Update | Update organization configuration and policies |
+| Get Billing | Retrieve billing information and subscription details |
+| Update Billing | Update billing settings and payment information |
 
-### Collections
+### 2. Member
 
 | Operation | Description |
 |-----------|-------------|
-| Get All | List all collections |
-| Get | Get collection by ID |
-| Create | Create new collection |
-| Update | Update collection |
-| Delete | Delete collection |
-| Get Members | Get members with access |
-| Add Member | Add member to collection |
-| Remove Member | Remove member from collection |
-| Get Groups | Get groups with access |
-| Update Groups | Update group access |
+| Get All | List all organization members with their roles and status |
+| Get | Retrieve specific member details and permissions |
+| Create | Invite new members to the organization |
+| Update | Modify member roles and access permissions |
+| Delete | Remove members from the organization |
+| Reinvite | Resend invitation to pending members |
 
-### Groups
+### 3. Group
 
 | Operation | Description |
 |-----------|-------------|
-| Get All | List all groups |
-| Get | Get group by ID |
-| Create | Create new group |
-| Update | Update group |
-| Delete | Delete group |
-| Get Members | Get members in group |
-| Add Members | Add members to group |
-| Remove Members | Remove members from group |
-| Get Collections | Get collection access |
-| Update Collections | Update collection access |
+| Get All | List all groups in the organization |
+| Get | Retrieve specific group details and member list |
+| Create | Create new groups for organizing members |
+| Update | Modify group settings and member assignments |
+| Delete | Remove groups from the organization |
 
-### Policies
+### 4. Collection
 
 | Operation | Description |
 |-----------|-------------|
-| Get All | List all policies |
-| Get | Get policy by type |
-| Update | Update policy configuration |
+| Get All | List all collections with access permissions |
+| Get | Retrieve specific collection details and items |
+| Create | Create new collections for organizing vault items |
+| Update | Modify collection settings and permissions |
+| Delete | Remove collections and their contents |
 
-**Supported Policy Types**: Two-Factor Authentication, Master Password, Password Generator, Single Organization, Require SSO, Personal Ownership, Disable Send, Send Options, Reset Password, Maximum Vault Timeout, Disable Personal Vault Export, Activate Autofill
-
-### Events
-
-| Operation | Description |
-|-----------|-------------|
-| Get All | List organization events |
-| Get By Date Range | Get events within date range |
-| Get By Member | Get events for a specific member |
-| Get By Type | Filter events by event type |
-
-### Organization
+### 5. Event
 
 | Operation | Description |
 |-----------|-------------|
-| Get | Get organization details |
-| Update | Update organization settings |
-| Get Billing | Get billing information |
-| Get Subscription | Get subscription details |
-| Get License | Get organization license |
-| Rotate API Key | Rotate the organization API key |
+| Get All | Retrieve organization event logs and audit trail |
+| Export | Export events for compliance and backup purposes |
 
-### SSO Configuration
+### 6. Secret
 
 | Operation | Description |
 |-----------|-------------|
-| Get | Get SSO configuration |
-| Update | Update SSO configuration |
-| Get Metadata | Get SSO metadata |
-| Test Connection | Test SSO connection |
+| Get All | List all secrets in specified projects |
+| Get | Retrieve specific secret values and metadata |
+| Create | Store new secrets with encryption |
+| Update | Modify existing secret values and settings |
+| Delete | Remove secrets from the vault |
 
-**Supported SSO Types**: OpenID Connect, SAML 2.0
-
-### Directory Sync
-
-| Operation | Description |
-|-----------|-------------|
-| Get | Get directory configuration |
-| Update | Update directory configuration |
-| Sync | Trigger directory sync |
-| Get Sync History | Get sync history |
-
-**Supported Directory Types**: Azure Active Directory, Okta, OneLogin, GSuite, JumpCloud, Generic LDAP
-
-### Secrets Manager - Secrets
+### 7. Project
 
 | Operation | Description |
 |-----------|-------------|
-| Get All | List all secrets |
-| Get | Get secret by ID |
-| Create | Create new secret |
-| Update | Update secret |
-| Delete | Delete secret |
-| Get By Project | Get secrets in project |
-
-*Note: Requires Secrets Manager subscription*
-
-### Secrets Manager - Projects
-
-| Operation | Description |
-|-----------|-------------|
-| Get All | List all projects |
-| Get | Get project by ID |
-| Create | Create new project |
-| Update | Update project |
-| Delete | Delete project |
-| Get Secrets | Get secrets in project |
-| Get Service Accounts | Get service accounts with access |
-
-### Secrets Manager - Service Accounts
-
-| Operation | Description |
-|-----------|-------------|
-| Get All | List all service accounts |
-| Get | Get service account by ID |
-| Create | Create service account |
-| Update | Update service account |
-| Delete | Delete service account |
-| Get Access Tokens | List access tokens |
-| Create Access Token | Create new access token |
-| Revoke Access Token | Revoke access token |
-
-### Import/Export
-
-| Operation | Description |
-|-----------|-------------|
-| Import Organization | Import organization vault data |
-| Export Organization | Export organization vault |
-| Import Members | Import members from CSV |
-| Export Members | Export members to CSV |
-
-## Trigger Node
-
-The Bitwarden Trigger node polls for organization events at configurable intervals.
-
-### Supported Events
-
-- All Events
-- Member Invited
-- Member Accepted
-- Member Confirmed
-- Member Updated
-- Member Removed
-- Collection Created
-- Collection Updated
-- Collection Deleted
-- Group Created
-- Group Updated
-- Group Deleted
-- Policy Updated
-- Organization Updated
-
-### Configuration
-
-| Property | Description |
-|----------|-------------|
-| Event | The event type to trigger on |
-| Include Acting User Details | Optionally include details about the user who triggered the event |
+| Get All | List all projects in the organization |
+| Get | Retrieve specific project details and secrets |
+| Create | Create new projects for organizing secrets |
+| Update | Modify project settings and access controls |
+| Delete | Remove projects and associated secrets |
 
 ## Usage Examples
 
-### Invite a New Member
-
 ```javascript
-// Workflow: HR System Integration
-// When a new employee is added to HR system, invite them to Bitwarden
-
-// Bitwarden Node Configuration
+// Create a new organization member
 {
-  "resource": "member",
-  "operation": "create",
-  "email": "{{$json.employeeEmail}}",
-  "type": 2, // User
+  "email": "newuser@company.com",
+  "type": 2,
   "accessAll": false,
   "collections": [
     {
-      "id": "department-collection-id",
-      "readOnly": false,
-      "hidePasswords": false,
-      "manage": false
+      "id": "collection-uuid-here",
+      "readOnly": false
     }
   ]
 }
 ```
 
-### Sync Groups with Directory
-
 ```javascript
-// Workflow: Nightly Directory Sync
-// Trigger directory sync and check results
-
-// Bitwarden Node Configuration - Trigger Sync
+// Create a secure secret in a project
 {
-  "resource": "directorySync",
-  "operation": "sync",
-  "syncType": "incremental"
-}
-
-// Bitwarden Node Configuration - Get History
-{
-  "resource": "directorySync",
-  "operation": "getSyncHistory"
+  "key": "DATABASE_PASSWORD",
+  "value": "super-secure-password-123",
+  "note": "Production database credentials",
+  "projectIds": ["project-uuid-here"]
 }
 ```
 
-### Monitor Security Events
-
 ```javascript
-// Workflow: Security Alerting
-// Send alerts for security-related events
-
-// Bitwarden Trigger Configuration
+// Update group with new members
 {
-  "event": "policyUpdated"
+  "name": "Development Team",
+  "accessAll": false,
+  "collections": [
+    {
+      "id": "dev-collection-uuid",
+      "readOnly": false
+    }
+  ]
 }
-
-// Then route to Slack/Email for alerting
 ```
 
-## Environment Support
-
-| Environment | API Base URL | Identity URL |
-|-------------|--------------|--------------|
-| Cloud US | https://api.bitwarden.com | https://identity.bitwarden.com |
-| Cloud EU | https://api.bitwarden.eu | https://identity.bitwarden.eu |
-| Self-hosted | https://your.domain.com/api | https://your.domain.com/identity |
+```javascript
+// Query organization events for audit
+{
+  "start": "2024-01-01T00:00:00Z",
+  "end": "2024-01-31T23:59:59Z",
+  "actingUserId": "user-uuid-here",
+  "itemId": "item-uuid-here"
+}
+```
 
 ## Error Handling
 
-The node handles common Bitwarden API errors:
-
-| Error Code | Description | Handling |
-|------------|-------------|----------|
-| 400 | Bad Request | Validation error details returned |
-| 401 | Unauthorized | Automatic token refresh and retry |
-| 403 | Forbidden | Insufficient permissions error |
-| 404 | Not Found | Resource not found error |
-| 409 | Conflict | Resource conflict error |
-| 429 | Rate Limited | Automatic retry with exponential backoff |
-
-## Security Best Practices
-
-1. **Credential Security**: Store API credentials securely in n8n's credential system
-2. **Principle of Least Privilege**: Use organization accounts with minimal required permissions
-3. **Audit Logging**: Monitor the Events resource for security-relevant activities
-4. **Secure Self-Hosted**: If using self-hosted Bitwarden, ensure HTTPS is properly configured
-5. **Rotate API Keys**: Periodically rotate organization API keys using the Organization resource
+| Error | Description | Solution |
+|-------|-------------|----------|
+| 401 Unauthorized | Invalid API key or expired credentials | Verify API key is correct and has not expired |
+| 403 Forbidden | Insufficient permissions for the operation | Check user role has required permissions for the resource |
+| 404 Not Found | Resource does not exist or access denied | Verify resource ID exists and user has access |
+| 429 Too Many Requests | API rate limit exceeded | Implement retry logic with exponential backoff |
+| 500 Internal Server Error | Bitwarden server error | Check Bitwarden status page and retry request |
+| Network Error | Connection timeout or DNS issues | Verify network connectivity and server URL |
 
 ## Development
 
 ```bash
-# Install dependencies
 npm install
-
-# Build the project
 npm run build
-
-# Watch mode for development
-npm run dev
-
-# Run linting
-npm run lint
-
-# Fix linting issues
-npm run lint:fix
-
-# Run tests
 npm test
-
-# Run tests with coverage
-npm run test:coverage
+npm run lint
+npm run dev
 ```
 
 ## Author
@@ -391,11 +217,9 @@ npm run test:coverage
 This n8n community node is licensed under the **Business Source License 1.1**.
 
 ### Free Use
-
 Permitted for personal, educational, research, and internal business use.
 
 ### Commercial Use
-
 Use of this node within any SaaS, PaaS, hosted platform, managed service, or paid automation offering requires a commercial license.
 
 For licensing inquiries: **licensing@velobpa.com**
@@ -404,22 +228,16 @@ See [LICENSE](LICENSE), [COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md), and [LIC
 
 ## Contributing
 
-Contributions are welcome! Please ensure all contributions comply with the BSL 1.1 license terms.
+Contributions are welcome! Please ensure:
 
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Open a Pull Request
+1. Code follows existing style conventions
+2. All tests pass (`npm test`)
+3. Linting passes (`npm run lint`)
+4. Documentation is updated for new features
+5. Commit messages are descriptive
 
 ## Support
 
-- **Documentation**: [Bitwarden Public API Documentation](https://bitwarden.com/help/public-api/)
 - **Issues**: [GitHub Issues](https://github.com/Velocity-BPA/n8n-nodes-bitwarden/issues)
-- **Commercial Support**: licensing@velobpa.com
-
-## Acknowledgments
-
-- [Bitwarden](https://bitwarden.com/) for their excellent password management platform and API
-- [n8n](https://n8n.io/) for the workflow automation platform
-- The open-source community for continuous support and feedback
+- **Bitwarden API Documentation**: [help.bitwarden.com/api](https://bitwarden.com/help/api/)
+- **Bitwarden Community**: [community.bitwarden.com](https://community.bitwarden.com/)
